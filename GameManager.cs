@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] enemyPrefabs, coinsPrefabs, cellPrefabs, levelObject;
     public static Item[] itemsPrefabs;
 
-    private short minX, maxX, minY, maxY;
+    private short minX, maxX, minY, maxY, tmpRooms;
     private float spaceX, spaceY, roomX, roomY;
     private byte level = 0, chargedLevel;
     private ushort[] numberOfRooms;
@@ -128,6 +128,7 @@ public class GameManager : MonoBehaviour
         Crates[level - 1] = new List<CellChild>();
         Items[level - 1] = new List<CellChild>();
         ToAdd.Add(CreateObjCell('e', 'n', 's', 'w', 'R', Vector2Int.zero, levelObject[level].transform));
+        tmpRooms = 0;
         while (ToAdd.Count != 0)
         {
             AdyacentRooms();
@@ -359,7 +360,10 @@ public class GameManager : MonoBehaviour
             if(i.Equals('_'))
                 walls++;
         }
-        auxRoom[4] = SetCell(walls>2);
+        char roomOrCorridor=SetCell(walls > 2);
+        if (roomOrCorridor=='R')
+            tmpRooms++;
+        auxRoom[4] = roomOrCorridor;
         ToAdd.Add(CreateObjCell(auxRoom[0], auxRoom[1], auxRoom[2], auxRoom[3], auxRoom[4], xy, levelObject[level].transform));
     }
 
@@ -552,8 +556,8 @@ public class GameManager : MonoBehaviour
     /// <returns> char posicion or '_' </returns>
     private char RndWll(char input)
     {
-        //IMPORNTANT!!! Grid[level].Count is necesary to not get stuck in a infinite while in CreateLevel()
-        float max = 10 + level * 0.25f + Grid[level].Count * 0.5f;
+        //IMPORNTANT!!! tmpRooms is necesary to not get stuck in a infinite while in CreateLevel()
+        float max = 10 + level * 0.25f + tmpRooms * 0.5f;
         if (Random.Range(-20, max) > 0)
             input = '_';
         return input;
@@ -570,7 +574,7 @@ public class GameManager : MonoBehaviour
             return 'R';
         else
         {
-            if (Random.Range(-30, Grid[level].Count * 0.1f) > 0)
+            if (Random.Range(-30, tmpRooms * 0.1f) > 0)
                 return 'R';
             else
                 return 'C';

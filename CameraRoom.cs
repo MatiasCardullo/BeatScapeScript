@@ -31,7 +31,7 @@ public class CameraRoom : MonoBehaviour
             {
                 CameraTarget.localScale = new Vector3(8, 8, 0);
                 vcam.Follow = CameraTarget;
-                vcam.m_Lens.OrthographicSize = 4.5f;
+                vcam.m_Lens.OrthographicSize = 4f;
             }
         }
         if (col.CompareTag("CameraTarget"))
